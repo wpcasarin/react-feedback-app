@@ -1,12 +1,16 @@
 import { createContext, useState } from 'react';
 import { v4 as uuid } from 'uuid';
+import FeedbackData from '../data/FeedBackData';
 
 const FeedbackContext = createContext();
 
 export const FeedbackProvider = ({ children }) => {
-  const [feedback, setFeedback] = useState([
-    { id: 1, text: 'this item is from context', rating: 10 },
-  ]);
+  const [feedback, setFeedback] = useState([...FeedbackData]);
+
+  const [feedbackEdit, setFeebackEdit] = useState({
+    item: {},
+    edit: false,
+  });
 
   const addFeedback = (newFeedback) => {
     newFeedback.id = uuid();
@@ -19,8 +23,25 @@ export const FeedbackProvider = ({ children }) => {
     }
   };
 
+  const editFeedback = (item) => {
+    setFeebackEdit({ item: item, edit: true });
+  };
+
+  const updateFeedback = (id, updItem) =>
+    setFeedback(
+      feedback.map((item) => (item.id === id ? { ...item, ...updItem } : item)),
+    );
   return (
-    <FeedbackContext.Provider value={{ feedback, deleteFeedback, addFeedback }}>
+    <FeedbackContext.Provider
+      value={{
+        feedback,
+        feedbackEdit,
+        deleteFeedback,
+        addFeedback,
+        editFeedback,
+        updateFeedback,
+      }}
+    >
       {children}
     </FeedbackContext.Provider>
   );
